@@ -1,3 +1,4 @@
+import { ArrowRightIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 
 export default function Footer() {
@@ -14,18 +15,7 @@ export default function Footer() {
           </Link>
         </p>
         <a className="inline-flex items-center text-indigo-500">
-          Learn More
-          <svg
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            className="ml-2 h-4 w-4"
-            viewBox="0 0 24 24"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
+          Learn More &nbsp; <ArrowRightIcon className="h-4 w-4" />
         </a>
       </div>
       <div className="border-l-2 border-gray-200 border-opacity-60 px-8 py-6 md:w-full lg:w-1/3">
@@ -39,18 +29,7 @@ export default function Footer() {
           your quality of life.
         </p>
         <a className="inline-flex items-center text-indigo-500">
-          Learn More
-          <svg
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            className="ml-2 h-4 w-4"
-            viewBox="0 0 24 24"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
+          Learn More &nbsp; <ArrowRightIcon className="h-4 w-4" />
         </a>
       </div>
       <div className="border-l-2 border-r-2 border-gray-200 border-opacity-60 px-8 py-6 md:w-full lg:w-1/3">
@@ -62,18 +41,7 @@ export default function Footer() {
           seeing our progress.
         </p>
         <a className="inline-flex items-center text-indigo-500">
-          Learn More
-          <svg
-            fill="none"
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            className="ml-2 h-4 w-4"
-            viewBox="0 0 24 24"
-          >
-            <path d="M5 12h14M12 5l7 7-7 7"></path>
-          </svg>
+          Learn More &nbsp; <ArrowRightIcon className="h-4 w-4" />
         </a>
       </div>
     </div>
