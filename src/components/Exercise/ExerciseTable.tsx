@@ -8,7 +8,6 @@ import { PencilSquareIcon } from "@heroicons/react/24/solid";
 
 import Link from "next/link";
 import { FC } from "react";
-import ReactMarkdown from "react-markdown";
 import { AppRouterTypes, trpc } from "../../utils/trpc";
 import { ArrElement } from "../../utils/typescript";
 
@@ -20,10 +19,13 @@ type ExerciseTableProps = {
 
 export const ExerciseTable: FC<ExerciseTableProps> = (props) => {
   const { search, category, show_description } = props;
-  const { data, isLoading, error } = trpc.exercises.getFiltered.useQuery({
-    search,
-    category,
-  });
+  const { data, isLoading, error } = trpc.exercises.getFiltered.useQuery(
+    {
+      search,
+      category,
+    },
+    { refetchOnWindowFocus: false }
+  );
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>There has been an error loading the table</div>;
   if (!data) return null;
@@ -51,12 +53,14 @@ const RenderTable: FC<RenderTableProps> = ({ data }) => {
       ),
     }),
     columnHelper.accessor("name", {
-      cell: (info) => info.getValue(),
       header: () => <span>Name</span>,
     }),
-    columnHelper.accessor("description", {
-      cell: (info) => <ReactMarkdown>{info.getValue()}</ReactMarkdown>,
-      header: () => <span>Description</span>,
+    // columnHelper.accessor("description", {
+    //   cell: (info) => <ReactMarkdown>{info.getValue()}</ReactMarkdown>,
+    //   header: () => <span>Description</span>,
+    // }),
+    columnHelper.accessor("category.name", {
+      header: () => <span>Category</span>,
     }),
     columnHelper.accessor("muscles", {
       cell: (info) =>
@@ -73,6 +77,9 @@ const RenderTable: FC<RenderTableProps> = ({ data }) => {
           .map((e) => e.name)
           .join(", "),
       header: () => <span>Equipment</span>,
+    }),
+    columnHelper.accessor("license_author", {
+      header: () => <span>Author</span>,
     }),
   ];
   const table = useReactTable({

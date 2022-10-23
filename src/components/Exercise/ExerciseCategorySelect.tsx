@@ -8,7 +8,10 @@ type ExerciseCategorySelectProps = {
 export default function ExerciseCategorySelect(
   props: ExerciseCategorySelectProps
 ) {
-  const { isLoading, error, data } = trpc.categories.getAll.useQuery();
+  const { isLoading, error, data } = trpc.categories.getAll.useQuery(
+    undefined,
+    { refetchOnWindowFocus: false }
+  );
   const { category, setCategory } = props;
 
   if (isLoading) return <div>Loading...</div>;

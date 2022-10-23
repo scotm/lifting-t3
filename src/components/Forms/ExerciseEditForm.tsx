@@ -1,8 +1,7 @@
-// import axios from "axios";
 import axios from "axios";
 import { Field, Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, FC, SetStateAction } from "react";
 import { AppRouterTypes, trpc } from "../../utils/trpc";
 import {
   MyCheckboxesFields,
@@ -11,14 +10,13 @@ import {
   MyTextField,
 } from "../FormComponents";
 
+type ExerciseInput = AppRouterTypes["exercises"]["editExercise"]["input"];
 // We don't need to fill out *all* these fields.
 // The API will (eventually) auto-generate the ones missing.
-type ExerciseInput = AppRouterTypes["exercises"]["editExercise"]["input"];
-type FormExercise =
-  | Omit<ExerciseInput, "muscles" | "equipment"> & {
-      muscles: string[];
-      equipment: string[];
-    };
+type FormExercise = Omit<ExerciseInput, "muscles" | "equipment"> & {
+  muscles: string[];
+  equipment: string[];
+};
 type FormErrors = Partial<{ [n in keyof FormExercise]: string }>;
 
 function validate(values: FormExercise): FormErrors {
@@ -51,13 +49,23 @@ type ExerciseFormProps = {
   onSubmit(values: FormExercise): void;
 };
 
-function ExerciseForm(props: ExerciseFormProps) {
+const ExerciseForm: FC<ExerciseFormProps> = (props) => {
   const { validate, initialValues, onSubmit } = props;
-  const { data: languages } = trpc.languages.getAll.useQuery();
-  const { data: licences } = trpc.licences.getAll.useQuery();
-  const { data: categories } = trpc.categories.getAll.useQuery();
-  const { data: muscles } = trpc.muscles.getAll.useQuery();
-  const { data: equipment } = trpc.equipment.getAll.useQuery();
+  const { data: languages } = trpc.languages.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: licences } = trpc.licences.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: categories } = trpc.categories.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: muscles } = trpc.muscles.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: equipment } = trpc.equipment.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
   // const router = useRouter();
 
   // We don't render anything until these have all returned.
@@ -117,7 +125,7 @@ function ExerciseForm(props: ExerciseFormProps) {
       }}
     </Formik>
   );
-}
+};
 
 export function ExerciseCreateForm() {
   // const router = useRouter();
@@ -150,28 +158,23 @@ type ExerciseEditFormProps = {
   setTitle?: Dispatch<SetStateAction<string>>;
 };
 
-export const ExerciseEditForm: React.FC<ExerciseEditFormProps> = ({
-  id,
-  setTitle,
-}) => {
+export const ExerciseEditForm: React.FC<ExerciseEditFormProps> = (props) => {
   // Pull in the data from API calls
-  const { data: exercise } = trpc.exercises.findByID.useQuery(id);
+  const { data: exercise } = trpc.exercises.findByID.useQuery(props.id, {
+    refetchOnWindowFocus: false,
+  });
   const utils = trpc.useContext();
   const mutation = trpc.exercises.editExercise.useMutation({
     onSuccess: () => {
-      utils.exercises.findByID.invalidate(id);
+      utils.exercises.findByID.invalidate(props.id);
       utils.exercises.getAll.invalidate();
       utils.exercises.getFiltered.invalidate();
     },
   });
   const router = useRouter();
 
-  if (!exercise) {
-    return null;
-  }
-  if (setTitle) {
-    setTitle(exercise.name);
-  }
+  if (!exercise) return null;
+
   const initialValues: FormExercise = {
     id: exercise.id,
     name: exercise.name,
@@ -195,7 +198,7 @@ export const ExerciseEditForm: React.FC<ExerciseEditFormProps> = ({
       initialValues={initialValues}
       onSubmit={async (values: FormExercise) => {
         // A call to the API.
-        const otherValues = {
+        const otherValues: ExerciseInput = {
           id: values.id,
           name: values.name,
           categoryId: values.categoryId,
@@ -206,9 +209,9 @@ export const ExerciseEditForm: React.FC<ExerciseEditFormProps> = ({
           muscles: values.muscles.map((e) => Number.parseInt(e)),
           equipment: values.equipment.map((e) => Number.parseInt(e)),
           variations: "",
-        } as ExerciseInput;
-
-        await mutation.mutate(otherValues);
+        };
+        console.log(otherValues);
+        mutation.mutate(otherValues);
         router.push(`/exercises/${values.id}`);
       }}
     />

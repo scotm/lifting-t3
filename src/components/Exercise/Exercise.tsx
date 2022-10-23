@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { FC } from "react";
 import ReactMarkdown from "react-markdown";
 import { AppRouterTypes } from "../../utils/trpc";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
 
 import ExerciseAdditional from "./ExerciseAdditional";
 
@@ -14,19 +16,15 @@ function swap_youtube_links(mystring: string) {
   );
 }
 
-type IExerciseComponentProps = {
+type ExerciseProps = {
   exercise: AppRouterTypes["exercises"]["findByID"]["output"];
   edit?: boolean;
   show_description?: boolean;
   link_to?: boolean;
 };
 
-export default function ExerciseComponent({
-  exercise: e,
-  edit,
-  show_description,
-  link_to,
-}: IExerciseComponentProps) {
+export const Exercise: FC<ExerciseProps> = (props) => {
+  const { exercise: e, edit, show_description, link_to } = props;
   if (!e) return <></>;
   return (
     <div key={e.id} className="p-4">
@@ -43,7 +41,9 @@ export default function ExerciseComponent({
       {edit ? (
         <p className="float-right">
           <Link href={`/exercises/edit/${e.id}`} passHref={true}>
-            <a>Edit</a>
+            <a>
+              <PencilSquareIcon className="h-8 w-8 text-indigo-500" />
+            </a>
           </Link>
         </p>
       ) : (
@@ -79,4 +79,4 @@ export default function ExerciseComponent({
       </div>
     </div>
   );
-}
+};

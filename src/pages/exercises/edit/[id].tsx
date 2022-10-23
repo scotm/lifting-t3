@@ -6,7 +6,7 @@ import parseID from "../../../utils/parseID";
 
 const EditExercise: React.FC = () => {
   const router = useRouter();
-  const [title, setTitle] = useState("Editing ");
+  const [title, setTitle] = useState("Editing Exercise");
   return (
     <Layout title={title}>
       <ExerciseEditForm id={parseID(router.query.id)} setTitle={setTitle} />

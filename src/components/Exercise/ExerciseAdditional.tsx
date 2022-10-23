@@ -10,7 +10,10 @@ export default function ExerciseAdditional({
   if (named === undefined) return <></>;
   const output =
     named.length > 0
-      ? named.map((n: { name: string }) => n.name).join(", ")
+      ? named
+          .map((n: { name: string }) => n.name)
+          .sort()
+          .join(", ")
       : "";
   return (
     <div>

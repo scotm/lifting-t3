@@ -85,7 +85,7 @@ export const exerciseRouter = router({
       })
     )
     .mutation(({ ctx, input }) => {
-      ctx.prisma.exercise.update({
+      return ctx.prisma.exercise.update({
         where: { id: input.id },
         data: {
           name: input.name,

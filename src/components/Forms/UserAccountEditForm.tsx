@@ -14,7 +14,9 @@ function validate(values: User) {
 const UserAccountEditForm: React.FC = () => {
   const [updated, setUpdated] = useState(false);
   const utils = trpc.useContext();
-  const { data: initialValues } = trpc.user.getCurrentUser.useQuery();
+  const { data: initialValues } = trpc.user.getCurrentUser.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
   const mutate = trpc.user.setCurrentUserInfo.useMutation({
     onSuccess() {
       utils.user.getCurrentUser.invalidate();
