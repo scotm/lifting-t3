@@ -13,6 +13,7 @@ const TIMER_DEFAULT_MS = 300;
 export default function ExerciseListHeader(props: ExerciseListHeaderProps) {
   const { category, search, setCategory, setSearch } = props;
   // Weird little hack
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   const [timer, setTimer] = React.useState(setTimeout(() => {}, 0));
   return (
     <div className="grid grid-cols-2 gap-4">

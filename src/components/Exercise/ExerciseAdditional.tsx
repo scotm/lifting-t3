@@ -1,5 +1,3 @@
-import { Equipment, Exercise } from "@prisma/client";
-
 type ExerciseAdditionalProps = {
   precursor: string;
   named?: Array<{ name: string }>;
@@ -10,7 +8,7 @@ export default function ExerciseAdditional({
   named,
 }: ExerciseAdditionalProps) {
   if (named === undefined) return <></>;
-  let output =
+  const output =
     named.length > 0
       ? named.map((n: { name: string }) => n.name).join(", ")
       : "";

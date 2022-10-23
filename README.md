@@ -2,49 +2,58 @@
 
 This is an app bootstrapped according to the [init.tips](https://init.tips) stack, also known as the T3-Stack.
 
-## Why are there `.js` files in here?
+## Connect Your Database
 
-As per [T3-Axiom #3](https://github.com/t3-oss/create-t3-app/tree/next#3-typesafety-isnt-optional), we take typesafety as a first class citizen. Unfortunately, not all frameworks and plugins support TypeScript which means some of the configuration files have to be `.js` files.
+Create a database - this assumes you're using PostgreSQL.
 
-We try to emphasize that these files are javascript for a reason, by explicitly declaring its type (`cjs` or `mjs`) depending on what's supported by the library it is used by. Also, all the `js` files in this project are still typechecked using a `@ts-check` comment at the top.
+```
+createdb mydb
+```
 
-## What's next? How do I make an app with this?
+Edit the .env file and change the DATABASE_URL config to suit your local setup.
 
-We try to keep this project as simple as possible, so you can start with the most basic configuration and then move on to more advanced configuration.
+```
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+```
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+I use PostgreSQL, and my hosting provider (understandably) limits my connection pool to around 30, so I add a _connection_limit_ parameter.
 
-- [Next-Auth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [TailwindCSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+```
+DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public&connection_limit=25"
+```
 
-Also checkout these awesome tutorials on `create-t3-app`.
+## Getting Started
 
-- [Build a Blog With the T3 Stack - tRPC, TypeScript, Next.js, Prisma & Zod](https://www.youtube.com/watch?v=syEWlxVFUrY)
-- [Build a Live Chat Application with the T3 Stack - TypeScript, Tailwind, tRPC](https://www.youtube.com/watch?v=dXRRY37MPuk)
-- [Build a full stack app with create-t3-app](https://www.nexxel.dev/blog/ct3a-guestbook)
-- [A first look at create-t3-app](https://dev.to/ajcwebdev/a-first-look-at-create-t3-app-1i8f)
+First, install the requirements
 
-## How do I deploy this?
+```bash
+npm install
+```
 
-### Vercel
+Then migrate and seed the database
 
-We recommend deploying to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_campaign=oss). It makes it super easy to deploy NextJs apps.
+```
+npx prisma migrate reset
+```
 
-- Push your code to a GitHub repository.
-- Go to [Vercel](https://vercel.com/?utm_source=t3-oss&utm_campaign=oss) and sign up with GitHub.
-- Create a Project and import the repository you pushed your code to.
-- Add your environment variables.
-- Click **Deploy**
-- Now whenever you push a change to your repository, Vercel will automatically redeploy your website!
+Next, run the development server:
 
-### Docker
+```bash
+npm run dev
+```
 
-You can also dockerize this stack and deploy a container. See the [Docker deployment page](https://create-t3-app-nu.vercel.app/en/deployment/docker) for details.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Useful resources
+## Learn More
 
-Here are some resources that we commonly refer to:
+To learn more about the stack, take a look at the following resources:
 
-- [Protecting routes with Next-Auth.js](https://next-auth.js.org/configuration/nextjs#unstable_getserversession)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [nextAuth Documentation](https://next-auth.js.org/getting-started/introduction)
+- [Tailwind Documentation](https://tailwindcss.com/docs/installation)
+- [trpc Documentation](https://trpc.io/docs)
+
+## Note on Database seeding
+
+The initial exercise and data seed files were adapted from work done on [the WGER project](https://github.com/wger-project/wger).

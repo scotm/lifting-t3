@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ErrorMessage, Field } from "formik";
 
 type LabelProps = { name: string; label: string };
@@ -15,7 +16,7 @@ type MyTextFieldProps = {
   className?: string;
   name: string;
   label: string;
-  onChange?: (e: any) => void;
+  onChange?: (e: Event) => void;
 };
 
 export const MyTextField: React.FC<MyTextFieldProps> = (props) => {
@@ -24,7 +25,7 @@ export const MyTextField: React.FC<MyTextFieldProps> = (props) => {
     <>
       {label ? <FieldLabel name={name} label={label} /> : null}
       <Field
-        className={className ?? "col-span-3 rounded-xl shadow-xl p-2"}
+        className={className ?? "col-span-3 rounded-xl p-2 shadow-xl"}
         name={name}
         as="input"
         type="text"

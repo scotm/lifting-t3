@@ -1,7 +1,7 @@
 import { useState } from "react";
-import ExerciseList from "../../components/Exercise/ExerciseList";
 import ExerciseListHeader from "../../components/Exercise/ExerciseListHeader";
 import Layout from "../../components/PageLayout/Layout";
+import { ExerciseTable } from "../../components/Exercise/ExerciseTable";
 
 export default function ShowExercises() {
   // The search parameters state
@@ -16,7 +16,8 @@ export default function ShowExercises() {
         setCategory={setCategory}
         setSearch={setSearch}
       />
-      <ExerciseList
+      {/* <RenderTable category={category} search={search} /> */}
+      <ExerciseTable
         show_description={false}
         category={category}
         search={search}
