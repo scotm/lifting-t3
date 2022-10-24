@@ -210,7 +210,6 @@ export const ExerciseEditForm: React.FC<ExerciseEditFormProps> = (props) => {
           equipment: values.equipment.map((e) => Number.parseInt(e)),
           variations: "",
         };
-        console.log(otherValues);
         mutation.mutate(otherValues);
         router.push(`/exercises/${values.id}`);
       }}

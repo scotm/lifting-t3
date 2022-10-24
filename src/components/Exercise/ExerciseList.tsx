@@ -1,5 +1,5 @@
 import { trpc } from "../../utils/trpc";
-import Exercise from "./Exercise";
+import { Exercise } from "./Exercise";
 
 type ExerciseListProps = {
   edit?: boolean;

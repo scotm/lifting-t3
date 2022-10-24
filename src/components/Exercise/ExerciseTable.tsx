@@ -9,7 +9,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import { FC } from "react";
 import { AppRouterTypes, trpc } from "../../utils/trpc";
-import { ArrElement } from "../../utils/typescript";
+import { UnwrapArray } from "../../utils/typescript";
 
 type ExerciseTableProps = {
   category: string;
@@ -40,7 +40,7 @@ type RenderTableProps = {
 
 const RenderTable: FC<RenderTableProps> = ({ data }) => {
   const columnHelper =
-    createColumnHelper<ArrElement<RenderTableProps["data"]>>();
+    createColumnHelper<UnwrapArray<RenderTableProps["data"]>>();
   const columns = [
     columnHelper.display({
       id: "edit",

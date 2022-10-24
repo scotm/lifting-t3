@@ -1,13 +1,14 @@
-import { AppRouterTypes } from "../utils/trpc";
-import { ArrElement } from "../utils/typescript";
+import { FC } from "react";
+import { trpc } from "../utils/trpc";
 
 type WorkoutTemplateProps = {
-  template: ArrElement<AppRouterTypes["workoutTemplates"]["getAll"]["output"]>;
+  id: number;
 };
 
-export default function WorkoutTemplate(props: WorkoutTemplateProps) {
-  const template = props.template;
-  console.log(template);
+export const WorkoutTemplate: FC<WorkoutTemplateProps> = (props) => {
+  const { id } = props;
+  const { data: template } = trpc.workoutTemplates.findByID.useQuery(id);
+  if (!template) return null;
   return (
     <div className="p-2">
       {template.pieces.map((e) => {
@@ -27,4 +28,4 @@ export default function WorkoutTemplate(props: WorkoutTemplateProps) {
       })}
     </div>
   );
-}
+};

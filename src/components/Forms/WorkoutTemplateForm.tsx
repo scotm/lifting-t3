@@ -1,29 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import axios from "axios";
-import axios from "axios";
 import { ArrayHelpers, FieldArray, Form, Formik } from "formik";
 import { useRouter } from "next/router";
+import { FC } from "react";
 import { AppRouterTypes, trpc } from "../../utils/trpc";
 import { MySelectField, MyTextField } from "../FormComponents";
 
-type WorkoutTemplateReturnType = NonNullable<
-  AppRouterTypes["workoutTemplates"]["findByID"]["output"]
+type WorkoutTemplateInput = NonNullable<
+  AppRouterTypes["workoutTemplates"]["create"]["input"]
 >;
-
-type FormInput = Omit<WorkoutTemplateReturnType, "id" | "userId">;
-type FormError = Partial<{ [day in keyof WorkoutTemplateReturnType]: string }>;
-
-type RepPairSubset = {
-  reps: number;
-  repetitionUnitsId: number;
-};
+type FormError = Partial<{ [s in keyof WorkoutTemplateInput]: string }>;
+type RepPairSubset = WorkoutTemplateInput["pieces"][number]["rep_pair"][number];
 
 const default_rep_pair: RepPairSubset = {
   reps: 10,
-  repetitionUnitsId: 1,
+  reptypeId: 1,
 };
 
-function validate(values: FormInput): FormError {
+const validate = (values: WorkoutTemplateInput): FormError => {
   const errors: FormError = {};
   if (!values.name) {
     errors.name = "Please give this workout a name";
@@ -39,24 +32,32 @@ function validate(values: FormInput): FormError {
     }
   }
   return errors;
-}
+};
 
-function AddSetButton(props: { ah: ArrayHelpers }) {
-  const { ah } = props;
+type AddSetProps = {
+  ah: ArrayHelpers;
+};
+
+const AddSetButton: FC<AddSetProps> = (props) => {
   return (
     <button
       className="mb-2 w-full rounded-xl bg-green-600 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-green-500"
       type="button"
       onClick={() => {
-        ah.push(default_rep_pair);
+        props.ah.push(default_rep_pair);
       }}
     >
       Add Set
     </button>
   );
-}
+};
 
-function RemoveExerciseButton(props: { ah: ArrayHelpers; index: number }) {
+type RemoveExerciseButtonProps = {
+  ah: ArrayHelpers;
+  index: number;
+};
+
+const RemoveExerciseButton: FC<RemoveExerciseButtonProps> = (props) => {
   const { ah, index } = props;
   return (
     <button
@@ -67,31 +68,53 @@ function RemoveExerciseButton(props: { ah: ArrayHelpers; index: number }) {
       Remove Exercise
     </button>
   );
-}
+};
 
-export function WorkoutTemplateForm() {
+export const WorkoutTemplateForm: FC = () => {
   const router = useRouter();
-  const { data: exercises } = trpc.exercises.getAll.useQuery();
-  const { data: repetitionunits } = trpc.repetitionUnits.getAll.useQuery();
-  const { data: weightunits } = trpc.weightUnits.getAll.useQuery();
+  const { data: exercises } = trpc.exercises.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const { data: repetitionunits } = trpc.repetitionUnits.getAll.useQuery(
+    undefined,
+    { refetchOnWindowFocus: false }
+  );
+  const { data: weightunits } = trpc.weightUnits.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
+  const mutation = trpc.workoutTemplates.create.useMutation();
 
-  if (!exercises || exercises.length <= 0 || !repetitionunits || !weightunits) {
+  // Typeguards for the various arrays
+  if (
+    !exercises ||
+    exercises.length <= 0 ||
+    exercises[0] === undefined ||
+    !repetitionunits ||
+    !weightunits
+  ) {
     return null;
   }
 
-  const initialValues: { name: string; pieces: any[] } = {
+  const initialValues: WorkoutTemplateInput = {
     name: "",
-    pieces: [{ exerciseId: exercises[0]?.id, rep_pair: [default_rep_pair] }],
+    pieces: [{ exerciseId: exercises[0].id, rep_pair: [default_rep_pair] }],
   };
 
   return (
     <Formik
       initialValues={initialValues}
       enableReinitialize={true}
-      onSubmit={async (values, formikhelpers) => {
-        console.log(values);
-        const response = await axios.post(`/api/workouttemplate/`, values);
-        router.push(`/workoutTemplate/${response.data.id}`);
+      onSubmit={(values, formikhelpers) => {
+        values.pieces.forEach((piece) => {
+          piece.exerciseId = Number(piece.exerciseId);
+          piece.rep_pair.forEach((rep_pair) => {
+            rep_pair.reptypeId = Number(rep_pair.reptypeId);
+          });
+        });
+        mutation.mutate(values, {
+          onSuccess: (response) =>
+            router.push(`/workoutTemplate/${response.id}`),
+        });
         formikhelpers.setSubmitting(false);
       }}
       validate={validate}
@@ -147,7 +170,7 @@ export function WorkoutTemplateForm() {
                               >
                                 <div className="text-center">---</div>
                                 <MySelectField
-                                  name={`pieces.${index}.rep_pair.${i}.repetitionUnitsId`}
+                                  name={`pieces.${index}.rep_pair.${i}.reptypeId`}
                                   label={""}
                                   className="col-start-2 mx-1 rounded-xl shadow-xl"
                                   options={repetitionunits}
@@ -204,4 +227,4 @@ export function WorkoutTemplateForm() {
       }}
     </Formik>
   );
-}
+};
