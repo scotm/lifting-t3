@@ -13,6 +13,7 @@ import { repetitionUnitsRouter } from "./liftingRouters/repetitionunits";
 import { userRouter } from "./liftingRouters/user";
 import { workoutTemplateRouter } from "./liftingRouters/workouttemplates";
 import { weightUnitsRouter } from "./liftingRouters/weightunits";
+import { workoutRouter } from "./liftingRouters/workout";
 
 export const appRouter = router({
   example: exampleRouter,
@@ -26,6 +27,7 @@ export const appRouter = router({
   repetitionUnits: repetitionUnitsRouter,
   user: userRouter,
   weightUnits: weightUnitsRouter,
+  workout: workoutRouter,
   workoutTemplates: workoutTemplateRouter,
 });
 

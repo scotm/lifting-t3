@@ -10,20 +10,19 @@ import {
   RemoveExerciseButton,
 } from "../FormComponents";
 
-type WorkoutTemplateInput = NonNullable<
-  AppRouterTypes["workoutTemplates"]["create"]["input"]
->;
-type RepPairSubset = WorkoutTemplateInput["pieces"][number]["rep_pair"][number];
+type WorkoutInput = NonNullable<AppRouterTypes["workout"]["create"]["input"]>;
+type ExerciseSets = WorkoutInput["pieces"][number];
+type RepPairSubset = ExerciseSets["set"][number];
 
-const default_rep_pair: RepPairSubset = {
+const default_set: RepPairSubset = {
+  weightUnitsId: 1,
+  weight: 10,
   reps: 10,
-  reptypeId: 1,
+  repetitionUnitsId: 1,
 };
 
-const validate = (
-  values: WorkoutTemplateInput
-): FormError<WorkoutTemplateInput> => {
-  const errors: FormError<WorkoutTemplateInput> = {};
+const validate = (values: WorkoutInput): FormError<WorkoutInput> => {
+  const errors: FormError<WorkoutInput> = {};
   if (!values.name) {
     errors.name = "Please give this workout a name";
   }
@@ -32,7 +31,7 @@ const validate = (
       errors.pieces =
         "There should be at least one exercise in a workout template";
     }
-    if (values.pieces.some((piece) => piece.rep_pair.length === 0)) {
+    if (values.pieces.some((piece) => piece.set.length === 0)) {
       errors.pieces =
         "There are exercises in this template, without a specific workload. Add a working set to it.";
     }
@@ -40,7 +39,7 @@ const validate = (
   return errors;
 };
 
-export const WorkoutTemplateForm: FC = () => {
+export const WorkoutForm: FC = () => {
   const router = useRouter();
   const { data: exercises } = trpc.exercises.getAll.useQuery(undefined, {
     refetchOnWindowFocus: false,
@@ -52,7 +51,7 @@ export const WorkoutTemplateForm: FC = () => {
   const { data: weightunits } = trpc.weightUnits.getAll.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
-  const mutation = trpc.workoutTemplates.create.useMutation();
+  const mutation = trpc.workout.create.useMutation();
 
   // Typeguards for the various arrays
   if (
@@ -65,9 +64,11 @@ export const WorkoutTemplateForm: FC = () => {
     return null;
   }
 
-  const initialValues: WorkoutTemplateInput = {
+  const initialValues: WorkoutInput = {
     name: "",
-    pieces: [{ exerciseId: exercises[0].id, rep_pair: [default_rep_pair] }],
+    difficulty: "CHALLENGING",
+    pieces: [{ exerciseId: exercises[0].id, set: [default_set], notes: "" }],
+    workoutNotes: "",
   };
 
   return (
@@ -77,13 +78,12 @@ export const WorkoutTemplateForm: FC = () => {
       onSubmit={(values, formikhelpers) => {
         values.pieces.forEach((piece) => {
           piece.exerciseId = Number(piece.exerciseId);
-          piece.rep_pair.forEach((rep_pair) => {
-            rep_pair.reptypeId = Number(rep_pair.reptypeId);
+          piece.set.forEach((set) => {
+            set.repetitionUnitsId = Number(set.repetitionUnitsId);
           });
         });
         mutation.mutate(values, {
-          onSuccess: (response) =>
-            router.push(`/workoutTemplate/${response.id}`),
+          onSuccess: (response) => router.push(`/workout/${response.id}`),
         });
         formikhelpers.setSubmitting(false);
       }}
@@ -115,10 +115,10 @@ export const WorkoutTemplateForm: FC = () => {
                         <RemoveExerciseButton ah={arrayHelpers} index={index} />
                       )}
                       <FieldArray
-                        name={`pieces.${index}.rep_pair`}
+                        name={`pieces.${index}.set`}
                         render={(ah) => (
                           <>
-                            {value.rep_pair.length > 0 ? (
+                            {value.set.length > 0 ? (
                               <>
                                 <div className="col-span-1 pl-8 text-lg font-bold">
                                   Sets
@@ -126,33 +126,30 @@ export const WorkoutTemplateForm: FC = () => {
                                 <div className="col-span-1 col-start-4">
                                   <AddSetButton
                                     ah={ah}
-                                    objtoadd={default_rep_pair}
+                                    objtoadd={default_set}
                                   />
                                 </div>
                               </>
                             ) : (
                               <div className="col-span-4">
-                                <AddSetButton
-                                  ah={ah}
-                                  objtoadd={default_rep_pair}
-                                />
+                                <AddSetButton ah={ah} objtoadd={default_set} />
                               </div>
                             )}
 
-                            {value.rep_pair.map((_, i) => (
+                            {value.set.map((_, i) => (
                               <div
-                                key={`pieces.${index}.rep_pair.${i}`}
+                                key={`pieces.${index}.set.${i}`}
                                 className={`col-span-4 grid grid-cols-4 gap-2`}
                               >
                                 <div className="text-center">---</div>
                                 <MySelectField
-                                  name={`pieces.${index}.rep_pair.${i}.reptypeId`}
+                                  name={`pieces.${index}.set.${i}.reptypeId`}
                                   label={""}
                                   className="col-start-2 mx-1 rounded-xl shadow-xl"
                                   options={repetitionunits}
                                 />
                                 <MyTextField
-                                  name={`pieces.${index}.rep_pair.${i}.reps`}
+                                  name={`pieces.${index}.set.${i}.reps`}
                                   label={""}
                                   className="mx-1 w-full rounded-xl shadow-xl"
                                 />
@@ -177,11 +174,12 @@ export const WorkoutTemplateForm: FC = () => {
                       className="rounded-xl bg-red-500 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-red-400"
                       type="button"
                       onClick={() => {
-                        const workoutpiece = {
-                          exerciseId: exercises[0]?.id,
-                          rep_pair: new Array(1).fill(default_rep_pair),
+                        const sets: ExerciseSets = {
+                          exerciseId: exercises[0]?.id ?? 0,
+                          notes: "",
+                          set: [default_set],
                         };
-                        arrayHelpers.push(workoutpiece);
+                        arrayHelpers.push(sets);
                       }}
                     >
                       Add {values.pieces.length > 0 ? "Another" : ""} Exercise

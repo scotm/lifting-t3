@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ErrorMessage, Field } from "formik";
+import { ArrayHelpers, ErrorMessage, Field } from "formik";
+import { FC } from "react";
+
+export type FormError<T> = Partial<{ [s in keyof T]: string }>;
 
 type LabelProps = { name: string; label: string };
 
@@ -102,3 +105,40 @@ export function MyCheckboxesFields(props: MyCheckboxesFieldsProps) {
     </>
   );
 }
+
+type AddSetProps = {
+  ah: ArrayHelpers;
+  objtoadd: unknown;
+};
+
+export const AddSetButton: FC<AddSetProps> = (props) => {
+  return (
+    <button
+      className="mb-2 w-full rounded-xl bg-green-600 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-green-500"
+      type="button"
+      onClick={() => {
+        props.ah.push(props.objtoadd);
+      }}
+    >
+      Add Set
+    </button>
+  );
+};
+
+type RemoveExerciseButtonProps = {
+  ah: ArrayHelpers;
+  index: number;
+};
+
+export const RemoveExerciseButton: FC<RemoveExerciseButtonProps> = (props) => {
+  const { ah, index } = props;
+  return (
+    <button
+      className="rounded-xl bg-red-500 py-2 px-4 text-white shadow-xl transition duration-300 hover:bg-red-400"
+      type="button"
+      onClick={() => ah.remove(index)}
+    >
+      Remove Exercise
+    </button>
+  );
+};
