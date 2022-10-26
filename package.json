@@ -2,6 +2,10 @@
   "name": "lifting-t3-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "prisma": {
+    "seed": "node prisma/seed.js"
+  },
   "scripts": {
     "build": "next build",
     "dev": "next dev",
@@ -23,6 +27,7 @@
     "formik": "^2.2.9",
     "next": "12.3.1",
     "next-auth": "^4.12.3",
+    "node-html-markdown": "^1.2.2",
     "nodemailer": "^6.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
