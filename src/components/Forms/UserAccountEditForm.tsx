@@ -1,66 +1,75 @@
-import { User } from "@prisma/client";
-import { Field, Form, Formik } from "formik";
 import { useState } from "react";
-import { trpc } from "../../utils/trpc";
-import { MyTextField } from "../FormComponents";
+import { AppRouterTypes, trpc } from "../../utils/trpc";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { MessagePlaceHolder } from "../FormComponents";
 
-function validate(values: User) {
-  const errors: Partial<User> = {};
-  if (!values.name) {
-    errors["name"] = "You need to supply a name";
-  }
-}
+type User = AppRouterTypes["user"]["setCurrentUserInfo"]["input"];
 
 const UserAccountEditForm: React.FC = () => {
-  const [updated, setUpdated] = useState(false);
+  const [isShowingMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("");
   const utils = trpc.useContext();
   const { data: initialValues } = trpc.user.getCurrentUser.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
+  const showMessage = (message: string, delay_ms?: number) => {
+    if (!delay_ms) delay_ms = 3000;
+    setMessage(message);
+    setShowMessage(true);
+    setTimeout(() => {
+      setShowMessage(false);
+    }, delay_ms);
+  };
   const mutate = trpc.user.setCurrentUserInfo.useMutation({
     onSuccess() {
       utils.user.getCurrentUser.invalidate();
+      showMessage("User info updated");
+    },
+    onError() {
+      showMessage("Error updating user info", 10000);
     },
   });
 
-  function onSubmit(values: User) {
-    const { name, id } = values;
+  const onSubmit: SubmitHandler<User> = ({ name, id }) => {
     mutate.mutate({ name: name ? name : "", id: id });
-    setUpdated(true);
-    setTimeout(() => setUpdated(false), 3000);
-  }
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<User>();
+
   if (!initialValues) return <></>;
   return (
     <>
-      {updated && (
-        <div className="grid place-items-center">
-          <div className="w-1/2 rounded-md bg-indigo-100 p-2 text-center">
-            User information updated
-          </div>
-        </div>
-      )}
-      <Formik
-        validate={validate}
-        enableReinitialize={true}
-        initialValues={initialValues}
-        onSubmit={onSubmit}
+      <MessagePlaceHolder show={isShowingMessage} message={message} />
+      <form
+        className="grid grid-cols-4 gap-4 py-4 lg:mx-8"
+        onSubmit={handleSubmit(onSubmit)}
       >
-        {(formik) => {
-          return (
-            <Form className="grid grid-cols-4 gap-4 py-4 lg:mx-8">
-              <Field type="hidden" name="id" />
-              <MyTextField name="name" label="Your Name" />
-              <button
-                className="col-span-3 col-start-2 rounded-xl bg-indigo-500 p-2 text-white shadow-xl transition duration-300 hover:bg-indigo-400"
-                type="submit"
-                disabled={!formik.isValid || formik.isSubmitting}
-              >
-                Submit
-              </button>
-            </Form>
-          );
-        }}
-      </Formik>
+        <input
+          {...register("id")}
+          type="hidden"
+          name="id"
+          defaultValue={initialValues.id}
+        />
+        <label htmlFor="name" className="col-span-1">
+          Name
+        </label>
+        <input
+          className="col-span-3 rounded-xl p-2 shadow-xl"
+          {...(register("name"), { required: true })}
+          type="text"
+          name="name"
+          defaultValue={initialValues.name ?? ""}
+        />
+        {errors.name && <span>This field is required</span>}
+        <input
+          className="col-span-3 col-start-2 rounded-xl bg-indigo-500 p-2 text-white shadow-xl transition duration-300 hover:bg-indigo-400"
+          type="submit"
+        />
+      </form>
     </>
   );
 };

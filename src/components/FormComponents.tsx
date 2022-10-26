@@ -142,3 +142,22 @@ export const RemoveExerciseButton: FC<RemoveExerciseButtonProps> = (props) => {
     </button>
   );
 };
+
+type MessagePlaceHolderProps = {
+  show: boolean;
+  message: string;
+};
+
+export const MessagePlaceHolder: React.FC<MessagePlaceHolderProps> = ({
+  show,
+  message,
+}) => {
+  if (!show) return null;
+  return (
+    <div className="grid place-items-center">
+      <div className="w-3/4 rounded-sm bg-indigo-100 p-2 text-center">
+        {message}
+      </div>
+    </div>
+  );
+};
