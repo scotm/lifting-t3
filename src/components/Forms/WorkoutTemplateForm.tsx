@@ -101,7 +101,7 @@ export const WorkoutTemplateForm: FC = () => {
                   {values.pieces.map((value, index) => (
                     <div
                       key={index}
-                      className={`col-span-4 mt-2 grid grid-cols-4 gap-4 rounded-md bg-red-100 p-4`}
+                      className={`col-span-4 mt-2 grid grid-cols-4 gap-4 rounded-md bg-indigo-100 p-4`}
                     >
                       <MySelectField
                         name={`pieces.${index}.exerciseId`}
@@ -109,7 +109,7 @@ export const WorkoutTemplateForm: FC = () => {
                         options={exercises}
                         className={`col-span-${
                           values.pieces.length > 1 ? "3" : "4"
-                        } rounded-md border-2 border-red-700 bg-red-500 text-white shadow-md`}
+                        } rounded-md border-2 border-indigo-700 bg-indigo-500 p-2 text-white shadow-md`}
                       />
                       {values.pieces.length > 1 && (
                         <RemoveExerciseButton ah={arrayHelpers} index={index} />
@@ -174,7 +174,7 @@ export const WorkoutTemplateForm: FC = () => {
                   ))}
                   <div className="col-span-4">
                     <button
-                      className="rounded-xl bg-red-500 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-red-400"
+                      className="rounded-xl bg-indigo-500 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-indigo-400"
                       type="button"
                       onClick={() => {
                         const workoutpiece = {
@@ -192,7 +192,7 @@ export const WorkoutTemplateForm: FC = () => {
             />
             <div></div>
             <button
-              className="col-span-3 col-start-2 mt-8 rounded-xl bg-red-500 p-2 text-lg font-bold text-white shadow-xl transition duration-300 hover:bg-red-400"
+              className="col-span-3 col-start-2 mt-8 rounded-xl bg-indigo-500 p-2 text-lg font-bold text-white shadow-xl transition duration-300 hover:bg-indigo-400"
               type="submit"
               disabled={!isValid || isSubmitting}
             >
