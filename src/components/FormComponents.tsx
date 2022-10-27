@@ -28,7 +28,10 @@ export const MyTextField: React.FC<MyTextFieldProps> = (props) => {
     <>
       {label ? <FieldLabel name={name} label={label} /> : null}
       <Field
-        className={className ?? "col-span-3 rounded-xl p-2 shadow-xl"}
+        className={
+          className ??
+          "col-span-3 rounded-xl border-2 border-gray-300 p-2 shadow-xl"
+        }
         name={name}
         as="input"
         type="text"
@@ -60,7 +63,8 @@ type MySelectFieldProps = {
 
 export function MySelectField(props: MySelectFieldProps) {
   const { name, label, options, className: myclass } = props;
-  const className = myclass ?? "col-span-3 rounded-xl shadow-xl p-2";
+  const className =
+    myclass ?? "border-2 border-gray-300 col-span-3 rounded-xl shadow-xl p-2";
   return (
     <>
       {label ? <FieldLabel name={name} label={label} /> : null}
@@ -161,3 +165,10 @@ export const MessagePlaceHolder: React.FC<MessagePlaceHolderProps> = ({
     </div>
   );
 };
+
+export const SubmitButton: FC = () => (
+  <input
+    className="col-span-3 col-start-2 rounded-xl bg-indigo-500 p-2 text-white shadow-xl transition duration-300 hover:bg-indigo-400"
+    type="submit"
+  ></input>
+);

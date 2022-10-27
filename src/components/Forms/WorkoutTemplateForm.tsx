@@ -79,6 +79,7 @@ export const WorkoutTemplateForm: FC = () => {
           piece.exerciseId = Number(piece.exerciseId);
           piece.rep_pair.forEach((rep_pair) => {
             rep_pair.reptypeId = Number(rep_pair.reptypeId);
+            rep_pair.reps = Number(rep_pair.reps);
           });
         });
         mutation.mutate(values, {
@@ -148,13 +149,13 @@ export const WorkoutTemplateForm: FC = () => {
                                 <MySelectField
                                   name={`pieces.${index}.rep_pair.${i}.reptypeId`}
                                   label={""}
-                                  className="col-start-2 mx-1 rounded-xl shadow-xl"
+                                  className="col-start-2 mx-1 rounded-xl border-2 border-gray-300 p-2 shadow-xl"
                                   options={repetitionunits}
                                 />
                                 <MyTextField
                                   name={`pieces.${index}.rep_pair.${i}.reps`}
                                   label={""}
-                                  className="mx-1 w-full rounded-xl shadow-xl"
+                                  className="mx-1 w-full rounded-xl border-2 border-gray-300 p-2 shadow-xl"
                                 />
                                 <button
                                   className="mx-1 rounded-xl bg-green-600 py-2 px-6 text-white shadow-xl transition duration-300 hover:bg-green-500"

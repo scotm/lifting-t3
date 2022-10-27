@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AppRouterTypes, trpc } from "../../utils/trpc";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { MessagePlaceHolder } from "../FormComponents";
+import { MessagePlaceHolder, SubmitButton } from "../FormComponents";
 
 type User = AppRouterTypes["user"]["setCurrentUserInfo"]["input"];
 
@@ -30,8 +30,10 @@ const UserAccountEditForm: React.FC = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<User> = ({ name, id }) => {
-    mutate.mutate({ name: name ? name : "", id: id });
+  const onSubmit: SubmitHandler<User> = (props) => {
+    console.log(props);
+    const { name, id } = props;
+    mutate.mutate({ name, id });
   };
 
   const {
@@ -41,6 +43,7 @@ const UserAccountEditForm: React.FC = () => {
   } = useForm<User>();
 
   if (!initialValues) return <></>;
+  initialValues.name = initialValues.name ?? "";
   return (
     <>
       <MessagePlaceHolder show={isShowingMessage} message={message} />
@@ -51,7 +54,6 @@ const UserAccountEditForm: React.FC = () => {
         <input
           {...register("id")}
           type="hidden"
-          name="id"
           defaultValue={initialValues.id}
         />
         <label htmlFor="name" className="col-span-1">
@@ -59,16 +61,11 @@ const UserAccountEditForm: React.FC = () => {
         </label>
         <input
           className="col-span-3 rounded-xl p-2 shadow-xl"
-          {...(register("name"), { required: true })}
-          type="text"
-          name="name"
-          defaultValue={initialValues.name ?? ""}
+          {...register("name")}
+          defaultValue={initialValues.name}
         />
         {errors.name && <span>This field is required</span>}
-        <input
-          className="col-span-3 col-start-2 rounded-xl bg-indigo-500 p-2 text-white shadow-xl transition duration-300 hover:bg-indigo-400"
-          type="submit"
-        />
+        <SubmitButton />
       </form>
     </>
   );

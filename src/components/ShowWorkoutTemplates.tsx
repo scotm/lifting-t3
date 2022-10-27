@@ -1,14 +1,18 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { FC } from "react";
 import { trpc } from "../utils/trpc";
 
-export default function ShowWorkoutTemplates() {
-  const { data: template } = trpc.workoutTemplates.getAll.useQuery();
+const UnwrappedWorkoutTemplates: FC = () => {
+  const { data: template } = trpc.workoutTemplates.getAll.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   if (!template) {
     return null;
   }
   return (
-    <div className="mt-2">
+    <div className="my-4">
       <h2 className="text-center text-3xl font-bold underline">
         Workout Templates
       </h2>
@@ -41,4 +45,10 @@ export default function ShowWorkoutTemplates() {
       </div>
     </div>
   );
+};
+
+export default function ShowWorkoutTemplates() {
+  const { data: session } = useSession();
+  if (!session) return null;
+  return <UnwrappedWorkoutTemplates />;
 }

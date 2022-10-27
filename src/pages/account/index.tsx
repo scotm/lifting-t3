@@ -9,7 +9,11 @@ function ButtonOrAccountDetails() {
     return <>Loading...</>;
   }
   if (status === "unauthenticated" || !session) {
-    return <UserLogin />;
+    return (
+      <div className="grid place-items-center">
+        <UserLogin />
+      </div>
+    );
   }
   return <UserAccountEditForm />;
 }

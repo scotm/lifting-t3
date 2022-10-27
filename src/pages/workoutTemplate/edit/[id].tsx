@@ -1,15 +1,13 @@
-import { useRouter } from "next/router";
-import { useState } from "react";
-// import { ExerciseEditForm } from "../../../components/Forms/ExerciseEditForm";
+// import { useRouter } from "next/router";
+// import { WorkoutTemplateForm } from "../../../components/Forms/WorkoutTemplateForm";
 import Layout from "../../../components/PageLayout/Layout";
-import parseID from "../../../utils/parseID";
+// import parseID from "../../../utils/parseID";
 
 const EditWorkoutTemplate: React.FC = () => {
-  const router = useRouter();
-  const [title, setTitle] = useState("Editing Workout Template");
+  // const router = useRouter();
   return (
-    <Layout title={title}>
-      {/* <ExerciseEditForm id={parseID(router.query.id)} setTitle={setTitle} /> */}
+    <Layout title="Edit Workout Template">
+      {/* <WorkoutTemplateForm id={parseID(router.query.id)} /> */}
     </Layout>
   );
 };

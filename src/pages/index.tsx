@@ -58,7 +58,6 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="mx-auto mt-8 max-w-4xl">
-        <ShowWorkoutTemplates />
         <Footer />
       </div>
     </>
